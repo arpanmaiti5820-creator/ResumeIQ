@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ResumeIQ: interview questions and a language check from your own CV</title>
+  <meta name="description" content="Upload your CV and get the interview questions a recruiter is likely to ask about your skills and projects, plus a check for wrong keywords and unprofessional wording.">
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Caveat:wght@600&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/base.css">
+  <link rel="stylesheet" href="/assets/css/landing.css">
+</head>
+<body class="landing">
+  <div class="pt" aria-hidden="true"><i style="--i:0"></i><i style="--i:1"></i><i style="--i:2"></i><i style="--i:3"></i><i style="--i:4"></i><i style="--i:5"></i></div>
+  <div class="pt-logo" aria-hidden="true">ResumeIQ</div>
+
+  <header class="nav" id="nav">
+    <div class="container nav-in">
+      <a class="logo" href="/" aria-label="ResumeIQ home">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#ffe45c"/><path d="M8 17.5l5.2 5L24.5 9" fill="none" stroke="#12151f" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Resume<em>IQ</em>
+      </a>
+      <nav class="nav-links" aria-label="Main">
+        <a href="#what">What you get</a>
+        <a href="#how">How it works</a>
+        <a href="#faq">Questions</a>
+      </nav>
+      <div class="nav-cta">
+        <a class="btn btn-plain" href="/login" id="nav-login">Log in</a>
+        <a class="btn btn-primary" href="/register" id="nav-start"><span>Check my CV</span></a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <h1>Know what they'll ask before you walk in.</h1>
+          <p class="lede">Upload your CV. ResumeIQ reads your skills and projects, writes the interview questions a recruiter is likely to ask, and marks the words that make you look less professional.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary btn-lg" href="/register"><span>Check my CV</span></a>
+            <a class="btn btn-lg" href="#what"><span>See what you get</span></a>
+          </div>
+          <p class="fine">Accepts PDF, DOCX and TXT files up to 5 MB.</p>
+        </div>
+
+        <div class="hero-stage" id="stage">
+          <article class="paper" id="paper" aria-label="Example of a marked-up CV">
+            <div class="paper-head">
+              <h2>Aarav Sen</h2>
+              <p>Full-stack developer, final year B.Tech</p>
+            </div>
+
+            <div class="row">
+              <p class="line"><b>Skills</b> <span class="pen p1">Javascript<span class="fix f1">JavaScript</span></span>, Node JS, Mongo DB, React</p>
+              <p class="note n1">Q: What blocks the event loop?</p>
+            </div>
+
+            <div class="row">
+              <p class="line"><b>Hostel Booking App</b>. Responsible for making the backend using Express.</p>
+              <p class="note n2">weak: say what you built</p>
+            </div>
+
+            <div class="row">
+              <p class="line">I am a <span class="pen p2">hard worker guy 😎</span> who loves coding.</p>
+              <p class="note n3 red">unprofessional</p>
+            </div>
+
+            <div class="row">
+              <p class="line"><span class="hl">Built REST APIs used by 2,000 students.</span></p>
+              <p class="note n4">Q: How did you handle 2,000 users?</p>
+            </div>
+
+            <div class="stamp" aria-hidden="true"><span>74</span><small>out of 100</small></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- WHAT YOU GET -->
+    <section class="what" id="what">
+      <div class="container">
+        <div class="section-head">
+          <h2>One upload. Three things you can use tonight.</h2>
+          <p>Everything below is generated from your own CV, not from a generic question bank.</p>
+        </div>
+
+        <div class="blocks">
+          <article class="block" data-in>
+            <div class="block-text">
+              <h3>Questions from your skills and projects</h3>
+              <p>If your CV says Node.js and a hostel booking app, expect questions about both. Each question comes with what the interviewer is really testing and how to answer it.</p>
+            </div>
+            <div class="sample qcard">
+              <div class="chips"><span class="chip c-blue">Projects</span><span class="chip">Hard</span></div>
+              <p class="q">Your booking app handles double bookings. How did you stop two students taking the same room?</p>
+              <div class="why"><b>They are testing</b> whether you understand race conditions and database transactions.</div>
+            </div>
+          </article>
+
+          <article class="block flip" data-in>
+            <div class="block-text">
+              <h3>A language check, line by line</h3>
+              <p>Wrong keywords, slang, emojis, first-person phrases and vague claims get marked, each with a better version you can paste in.</p>
+            </div>
+            <div class="sample fixes">
+              <div class="fix-row" style="--k:0"><span class="from">Responsible for making website using Javascript</span><span class="to">Built a responsive website with JavaScript</span></div>
+              <div class="fix-row" style="--k:1"><span class="from">Mongo DB, Node JS</span><span class="to">MongoDB, Node.js</span></div>
+              <div class="fix-row" style="--k:2"><span class="from">I am a very hard worker guy 😎</span><span class="to">Shipped 3 projects while studying full time</span></div>
+            </div>
+          </article>
+
+          <article class="block" data-in>
+            <div class="block-text">
+              <h3>A score that says where to work first</h3>
+              <p>Overall, ATS-friendliness, clarity, professionalism and impact, so you fix the weakest part before the rest.</p>
+            </div>
+            <div class="sample bars">
+              <div class="bar" style="--k:0"><span>Overall</span><i style="--w:74%"></i><b>74</b></div>
+              <div class="bar" style="--k:1"><span>ATS-friendly</span><i style="--w:81%"></i><b>81</b></div>
+              <div class="bar" style="--k:2"><span>Clarity</span><i style="--w:68%"></i><b>68</b></div>
+              <div class="bar" style="--k:3"><span>Professionalism</span><i style="--w:52%" class="low"></i><b>52</b></div>
+              <div class="bar" style="--k:4"><span>Impact</span><i style="--w:71%"></i><b>71</b></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW -->
+    <section class="how" id="how">
+      <div class="container">
+        <div class="section-head">
+          <h2>How it works</h2>
+        </div>
+        <ol class="steps">
+          <li data-in>
+            <span class="step-n">1</span>
+            <h3>Upload your CV</h3>
+            <p>Drop a PDF, DOCX or TXT file into your dashboard.</p>
+          </li>
+          <li data-in>
+            <span class="step-n">2</span>
+            <h3>AI reads it like a recruiter</h3>
+            <p>It finds your skills and projects, then writes questions and marks the problems.</p>
+          </li>
+          <li data-in>
+            <span class="step-n">3</span>
+            <h3>Practice and fix</h3>
+            <p>Answer the questions out loud, apply the fixes, and upload the new version.</p>
+          </li>
+        </ol>
+
+        <div class="storage" data-in>
+          <h3>One CV per account, so nothing piles up</h3>
+          <p>Upload the same CV again and you get your saved results back instantly, with no new analysis. Choose <b>Try another CV</b> and the new one replaces the old one. We keep the results, never the file.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq" id="faq">
+      <div class="container faq-grid">
+        <div class="section-head left">
+          <h2>Questions people ask</h2>
+        </div>
+        <div class="acc" id="acc">
+          <div class="acc-item">
+            <button class="acc-q" aria-expanded="false"><span>Which files can I upload?</span><i aria-hidden="true"></i></button>
+            <div class="acc-a"><div><p>PDF, DOCX and TXT up to 5 MB. The file needs real text in it. A scanned photo of a CV can't be read, so export a text-based PDF instead.</p></div></div>
+          </div>
+          <div class="acc-item">
+            <button class="acc-q" aria-expanded="false"><span>Do you keep my CV file?</span><i aria-hidden="true"></i></button>
+            <div class="acc-a"><div><p>No. The file is read and discarded. We store the analysis (questions, issues, scores) and a fingerprint of the text, so we can tell whether you uploaded the same CV again.</p></div></div>
+          </div>
+          <div class="acc-item">
+            <button class="acc-q" aria-expanded="false"><span>Can I sign in with Google?</span><i aria-hidden="true"></i></button>
+            <div class="acc-a"><div><p>Yes. You can also sign up with an email and password, and reset the password by email if you forget it.</p></div></div>
+          </div>
+          <div class="acc-item">
+            <button class="acc-q" aria-expanded="false"><span>Are the questions guaranteed to be asked?</span><i aria-hidden="true"></i></button>
+            <div class="acc-a"><div><p>No. They are the questions a recruiter could reasonably ask about what your CV claims. Treat them as practice, and expect follow-ups.</p></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+      <div class="container cta-in">
+        <h2>Your next interview starts with your CV.</h2>
+        <a class="btn btn-primary btn-lg" href="/register"><span>Check my CV</span></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="container foot-in">
+      <a class="logo" href="/">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#ffe45c"/><path d="M8 17.5l5.2 5L24.5 9" fill="none" stroke="#12151f" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Resume<em>IQ</em>
+      </a>
+      <p>AI feedback is a guide, not a guarantee. Always review suggestions before you send your CV.</p>
+    </div>
+  </footer>
+
+  <script src="/assets/js/core.js"></script>
+  <script src="/assets/js/landing.js"></script>
+</body>
+</html>
