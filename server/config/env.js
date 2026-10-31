@@ -13,22 +13,22 @@ const config = {
   jwtDays: Number(env.JWT_EXPIRES_DAYS) || 7,
   googleClientId: env.GOOGLE_CLIENT_ID || '',
   ai: {
-    provider: (env.AI_PROVIDER || 'anthropic').toLowerCase(),
-    // anthropic: {
-    //   key: env.ANTHROPIC_API_KEY,
-    //   model: env.ANTHROPIC_MODEL || 'claude-sonnet-5-5',
-    //   baseUrl: env.ANTHROPIC_BASE_URL || 'https://api.anthropic.com',
-    // },
+    provider: (env.AI_PROVIDER || 'gemini').toLowerCase(),
+    anthropic: {
+      key: env.ANTHROPIC_API_KEY,
+      model: env.ANTHROPIC_MODEL || 'claude-sonnet-5-5',
+      baseUrl: env.ANTHROPIC_BASE_URL || 'https://api.anthropic.com',
+    },
     gemini: {
       key: env.GEMINI_API_KEY,
       model: env.GEMINI_MODEL || 'gemini-3.5-flash-lite',
       // optional: a different model just for web search (falls back to GEMINI_MODEL when empty)
       searchModel: env.GEMINI_SEARCH_MODEL || '',
     },
-    // openai: {
-    //   key: env.OPENAI_API_KEY,
-    //   model: env.OPENAI_MODEL || 'gpt-4o-mini',
-    // },
+    openai: {
+      key: env.OPENAI_API_KEY,
+      model: env.OPENAI_MODEL || 'gpt-4o-mini',
+    },
   },
   // optional: Tavily web search (free plan, no card). Finds real interview pages without using AI quota.
   search: { tavilyKey: env.TAVILY_API_KEY || '' },
