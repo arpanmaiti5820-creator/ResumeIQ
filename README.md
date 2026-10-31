@@ -103,8 +103,17 @@ resumeiq/
 ## Company prep notes
 
 - **Web research:** works with `AI_PROVIDER=gemini` (Google Search) and `anthropic` (web search tool, if your account has it enabled). With `openai`, or if search fails, the set is still created from the job description and general patterns, and is clearly labelled as less certain.
+- **Two searches per set:** one for company facts, one for interview questions that real candidates posted (GeeksforGeeks, AmbitionBox, Glassdoor, LeetCode Discuss, Reddit, Medium and similar). They run in parallel.
+- **Every question is labelled.**
+  - **Reported by candidates**: the question matches a candidate's post, and the card links to that page. The server accepts this label only if the link is a page the search engine actually returned, the question text matches that report, and the report is not reused. The AI never writes the link.
+  - **Predicted**: everything else, built from your CV, the job description and company research. Nobody has confirmed the company asks it.
+- **Real pages, always:** the practice set also shows a "Read real interview experiences" panel. It lists the pages the interview search actually found, plus search links (Google, GeeksforGeeks, AmbitionBox, Glassdoor, LeetCode Discuss, Reddit) that work even when no question could be tied to a page. With Gemini, a question is linked only where Google itself attributes that line to a page.
+- **Free real-page search with Tavily (recommended):** add `TAVILY_API_KEY` to `.env` (free key, 1,000 searches a month, no card, from https://app.tavily.com). The app then finds real interview pages and company facts through Tavily and uses the AI only to write questions, so Gemini's search quota is not needed and this works with any AI provider. A question is marked "Reported by candidates" only when most of its key words appear in the text of a page Tavily returned, and the link is that page. If Tavily is not set or fails, the app falls back to the AI's own web search. Each set uses 2 Tavily searches.
+- **Limits:** a small company may have no public reports, so all questions will be "Predicted". Some sites (Glassdoor often) block automated reading. Reported questions are one person's account and may be old. With Gemini the link goes through Google's own redirect and is checked at site level, not page level. Sets made before this feature show every question as "Predicted"; delete and recreate them to search for reports.
+- **Cost:** each new set makes two web-search calls instead of one.
+- **Gemini models and free limits:** use the model ID in `GEMINI_MODEL` (for example `gemini-3.5-flash-lite`), not the display name. Free keys allow only about 20 requests a day on `gemini-3.8-flash` and far more on Flash-Lite models; check Rate Limit in Google AI Studio. Each set needs about 3 requests. You can set `GEMINI_SEARCH_MODEL` to use a different model just for web search.
+- The green tag "Company facts from web research" only describes the company summary. It says nothing about whether a question was asked. Interview rounds and questions are never a promise of what will be asked.
 - Sets belong to the saved CV, so uploading a different CV clears them. At most 5 are kept, and each user can create 10 per hour.
-- The tool says "Backed by web research" only when real search results were used. Interview rounds and questions are likely topics, never a promise of what will be asked.
 
 ## If you see "The AI service returned an error"
 

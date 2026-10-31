@@ -15,6 +15,7 @@ const summary = (p) => ({
   company: p.company,
   role: p.role,
   grounded: p.grounded,
+  reportedCount: p.reports ? p.reports.used : null,
   matchScore: p.data && p.data.match ? p.data.match.score : null,
   createdAt: p.createdAt,
 });
@@ -56,6 +57,7 @@ exports.create = asyncHandler(async (req, res) => {
     hasJobDescription: Boolean(jobDescription),
     grounded: result.grounded,
     sources: result.sources,
+    reports: result.reports, // { searched, found, used }: what the candidate-report search did
     aiModel: result.model,
     createdAt: new Date(),
     data: result.data,

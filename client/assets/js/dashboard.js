@@ -65,8 +65,15 @@
   }
 
   /* the opened part of a question card: why it is asked, how to approach it, sample answer, follow-ups, mistake */
+  function sourceHTML(q) {
+    if (q.origin !== 'reported' || !q.source || !/^https?:\/\//i.test(q.source.url || '')) return '';
+    const when = [q.reportedRound, q.reportedYear].filter(Boolean).join(', ');
+    return `<p class="src-note"><b>Where this was reported</b><a href="${esc(q.source.url)}" target="_blank" rel="noopener noreferrer">${esc(q.source.title || 'Open the post')}</a>${when ? ` <span>(${esc(when)})</span>` : ''}<em>One candidate's account. It may be old or may not apply to your role. Open the link to check it yourself.</em></p>`;
+  }
+
   function qInner(q) {
     const out = [];
+    out.push(sourceHTML(q));
     if (q.whyAsked) out.push(`<p><b>What they are testing</b>${esc(q.whyAsked)}</p>`);
     if (q.tip) out.push(`<p><b>How to approach it</b>${esc(q.tip)}</p>`);
     if (q.modelAnswer) out.push(`<p class="ans"><b>Sample answer</b>${esc(q.modelAnswer)}</p>`);
@@ -283,7 +290,7 @@
       <div class="prep-list">${state.preps
         .map(
           (p) => `<div class="prep-item">
-            <button class="prep-open" data-prep-open="${esc(p.id)}"><b>${esc(p.company)}</b><span>${p.role ? esc(p.role) + ', ' : ''}${p.matchScore != null ? 'CV match ' + p.matchScore + '/100, ' : ''}${fmtDate(p.createdAt)}</span></button>
+            <button class="prep-open" data-prep-open="${esc(p.id)}"><b>${esc(p.company)}</b><span>${p.role ? esc(p.role) + ', ' : ''}${p.matchScore != null ? 'CV match ' + p.matchScore + '/100, ' : ''}${p.reportedCount ? p.reportedCount + ' reported, ' : ''}${fmtDate(p.createdAt)}</span></button>
             <button class="prep-del" data-prep-del="${esc(p.id)}" aria-label="Delete ${esc(p.company)} practice set">Delete</button>
           </div>`
         )
@@ -309,7 +316,7 @@
           <div class="field">
             <label for="p-jd">Job description (optional)</label>
             <textarea class="input" id="p-jd" maxlength="6000" placeholder="Paste the job post here for sharper questions"></textarea>
-            <p class="help">We look up the company, then write questions from the company, the job description, and the skills and projects on your CV.</p>
+            <p class="help">We look up the company and search for interview experiences candidates have posted, then write questions from those, the job description, and the skills and projects on your CV.</p>
           </div>
           <div><button class="btn btn-primary" type="submit"><span>Create practice set</span></button></div>
         </form>
@@ -345,15 +352,38 @@
 
   function prepDetailHTML(p) {
     const d = p.data;
-    const counts = { all: d.questions.length };
+    const counts = { all: d.questions.length, reported: d.questions.filter((q) => q.origin === 'reported').length };
     d.questions.forEach((q) => { counts[q.category] = (counts[q.category] || 0) + 1; });
-    const pills = ['all', 'technical', 'projects', 'company', 'behavioral']
+    const pills = ['all', 'reported', 'technical', 'projects', 'company', 'behavioral']
       .filter((k) => counts[k])
-      .map((k) => `<button class="pill ${state.pFilter === k ? 'on' : ''}" data-pcat="${k}">${k === 'all' ? 'All' : PCATS[k]}<small>${counts[k]}</small></button>`)
+      .map((k) => `<button class="pill ${state.pFilter === k ? 'on' : ''}" data-pcat="${k}">${k === 'all' ? 'All' : k === 'reported' ? 'Reported by candidates' : PCATS[k]}<small>${counts[k]}</small></button>`)
       .join('');
-    const conf = { high: ['good', 'Backed by web research'], medium: ['warn', 'Partly verified'], low: ['warn', 'Mostly general patterns'] }[d.confidence];
+    // This tag is about the company facts only. Whether a question was really asked is shown on each question.
+    const conf = { high: ['good', 'Company facts from web research'], medium: ['warn', 'Company facts partly verified'], low: ['warn', 'Company facts mostly general'] }[d.confidence];
+    const r = p.reports;
+    const repTag = !r ? null : !r.searched ? ['warn', 'Candidate search did not run'] : r.used > 0 ? ['good', `${r.used} question${r.used === 1 ? '' : 's'} reported by candidates`] : ['warn', 'No candidate reports found'];
+    const origin = esc(d.company.name || p.company);
+    // Real interview pages: the ones the search found, plus search links that always work.
+    const coName = p.company || d.company.name || '';
+    const gq = (site) => 'https://www.google.com/search?q=' + encodeURIComponent(`${coName} ${p.role || ''} interview experience${site ? ' site:' + site : ''}`.replace(/\s+/g, ' ').trim());
+    const finders = [['Google', ''], ['GeeksforGeeks', 'geeksforgeeks.org'], ['AmbitionBox', 'ambitionbox.com'], ['Glassdoor', 'glassdoor.com'], ['LeetCode Discuss', 'leetcode.com'], ['Reddit', 'reddit.com']];
+    const foundPages = (r && Array.isArray(r.pages) ? r.pages : []).filter((x) => /^https?:\/\//i.test(x.url || ''));
+    const expHTML = `<div class="exp-card rise" style="--i:3">
+        <h3>Read real interview experiences</h3>
+        ${foundPages.length
+        ? `<p class="exp-sub">Pages the web search found about interviews at ${origin}. Open them to read what candidates say they were asked.</p><ul class="exp-list">${foundPages.map((x) => `<li><a href="${esc(x.url)}" target="_blank" rel="noopener noreferrer">${esc(x.title || x.url)}</a></li>`).join('')}</ul>`
+        : `<p class="exp-sub">No pages were found automatically for ${origin}. Use these searches to find candidate reports yourself.</p>`}
+        <p class="exp-find"><b>Search for more</b>${finders.map(([n, site]) => `<a href="${esc(gq(site))}" target="_blank" rel="noopener noreferrer">${n}</a>`).join('')}</p>
+      </div>`;
+    const repNote = !r
+      ? 'This set was made before candidate reports were added, so every question here is a prediction. Delete it and create it again to search for reports.'
+      : !r.searched
+        ? 'The search for candidate reports could not run. Either your AI provider has no web search (OpenAI), or the search call failed (check the server terminal for a line starting with [ai]). Every question here is a prediction.'
+        : r.used > 0
+          ? `Questions marked <b>Reported by candidates</b> link to the post where a candidate said they were asked it. Open the link to check it. All other questions are <b>Predicted</b>.`
+          : `We searched for interview experiences at ${origin} and found nothing usable, so every question is <b>Predicted</b>. Small companies often have no public reports.`;
     const sources = (p.sources || []).length
-      ? `<div class="panel rise" style="--i:6"><h3>Sources we used</h3><ul class="src-list">${p.sources.map((s) => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.title)}</a></li>`).join('')}</ul></div>`
+      ? `<div class="panel rise" style="--i:6"><h3>Sources for the company facts</h3><ul class="src-list">${p.sources.map((s) => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.title)}</a></li>`).join('')}</ul></div>`
       : '';
 
     return `
@@ -368,6 +398,7 @@
         </dl>
         <div class="trust">
           <span class="tag ${conf[0]}">${conf[1]}</span>
+          ${repTag ? `<span class="tag ${repTag[0]}">${repTag[1]}</span>` : ''}
           <span class="tag ${p.hasJobDescription ? 'good' : 'warn'}">${p.hasJobDescription ? 'Uses your job description' : 'No job description added'}</span>
         </div>
         ${d.caveats ? `<p class="caveat">${esc(d.caveats)}</p>` : ''}
@@ -386,7 +417,9 @@
         </div>
       </div>
 
+      ${expHTML}
       <div class="prep-head rise" style="--i:3"><h3>Practice questions</h3></div>
+      <p class="prep-note rise" style="--i:3"><b>Predicted, not confirmed.</b> These are practice questions built from your CV, the job description and the web. No company publishes its questions, so nobody can promise ${origin} will ask any of them. ${repNote}</p>
       <div class="filters rise" style="--i:3">${pills}</div>
       <div class="q-list" id="pq-list"></div>
 
@@ -407,14 +440,14 @@
   function drawPrepQuestions() {
     const list = $('#pq-list');
     if (!list || !state.prep) return;
-    const items = state.prep.data.questions.filter((q) => state.pFilter === 'all' || q.category === state.pFilter);
+    const items = state.prep.data.questions.filter((q) => state.pFilter === 'all' || (state.pFilter === 'reported' ? q.origin === 'reported' : q.category === state.pFilter));
     list.innerHTML = items
       .map(
         (q, idx) => `
       <article class="q" style="animation: rise 0.5s var(--ease) both; animation-delay:${Math.min(idx, 10) * 40}ms">
         <button class="q-head" aria-expanded="false">
           <div>
-            <div class="q-meta"><span class="tag ${q.category}">${PCATS[q.category]}</span>${q.topic ? `<span class="topic">${esc(q.topic)}</span>` : ''}<span class="diff ${q.difficulty}"><i></i>${q.difficulty[0].toUpperCase() + q.difficulty.slice(1)}</span></div>
+            <div class="q-meta"><span class="tag ${q.category}">${PCATS[q.category]}</span><span class="tag ${q.origin === 'reported' ? 'reported' : 'predicted'}">${q.origin === 'reported' ? 'Reported by candidates' : 'Predicted'}</span>${q.topic ? `<span class="topic">${esc(q.topic)}</span>` : ''}<span class="diff ${q.difficulty}"><i></i>${q.difficulty[0].toUpperCase() + q.difficulty.slice(1)}</span></div>
             <p class="q-text">${esc(q.question)}</p>
           </div>
           <span class="chev" aria-hidden="true"></span>
@@ -433,13 +466,16 @@
     state.busy = true;
     const btn = e.target.querySelector('button[type="submit"]');
     window.RIQ.setLoading(btn, true);
-    startOverlay('Researching ' + company, ['Looking up ' + company, 'Reading your skills and projects', 'Writing practice questions', 'Building your prep plan']);
+    startOverlay('Researching ' + company, ['Looking up ' + company, 'Searching candidate interview reports', 'Reading your skills and projects', 'Writing practice questions', 'Building your prep plan']);
     try {
-      const data = await api('/api/prep', { method: 'POST', body: { company, role: $('#p-role').value, jobDescription: $('#p-jd').value } });
+      const data = await Promise.race([
+        api('/api/prep', { method: 'POST', body: { company, role: $('#p-role').value, jobDescription: $('#p-jd').value } }),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('This is taking too long. The AI service is probably busy or out of quota. Check the server terminal, wait a minute, then reload this page and try again.')), 240000)),
+      ]);
       await finishOverlay();
       state.prep = data.prep;
       state.pFilter = 'all';
-      const meta = { id: data.prep.id, company: data.prep.company, role: data.prep.role, grounded: data.prep.grounded, matchScore: data.prep.data.match ? data.prep.data.match.score : null, createdAt: data.prep.createdAt };
+      const meta = { id: data.prep.id, company: data.prep.company, role: data.prep.role, grounded: data.prep.grounded, reportedCount: data.prep.reports ? data.prep.reports.used : null, matchScore: data.prep.data.match ? data.prep.data.match.score : null, createdAt: data.prep.createdAt };
       state.preps = [meta, ...state.preps.filter((p) => p.id !== meta.id)].slice(0, 5);
       renderPrep();
       toast(data.reused ? 'You already made this one, so we opened it.' : 'Practice set ready.', data.reused ? 'info' : 'success');

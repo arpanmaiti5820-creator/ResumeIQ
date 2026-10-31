@@ -21,13 +21,17 @@ const config = {
     },
     gemini: {
       key: env.GEMINI_API_KEY,
-      model: env.GEMINI_MODEL || 'gemini-2.5-flash',
+      model: env.GEMINI_MODEL || 'gemini-3.5-flash-lite',
+      // optional: a different model just for web search (falls back to GEMINI_MODEL when empty)
+      searchModel: env.GEMINI_SEARCH_MODEL || '',
     },
     openai: {
       key: env.OPENAI_API_KEY,
       model: env.OPENAI_MODEL || 'gpt-4o-mini',
     },
   },
+  // optional: Tavily web search (free plan, no card). Finds real interview pages without using AI quota.
+  search: { tavilyKey: env.TAVILY_API_KEY || '' },
   smtp: {
     host: env.SMTP_HOST,
     port: Number(env.SMTP_PORT) || 587,
